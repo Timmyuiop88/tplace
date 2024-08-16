@@ -58,6 +58,9 @@ export async function GET(req, res) {
           user: true,
           product: true,
         },
+        orderBy: {
+          id: 'desc',
+        },
       });
       return new Response(JSON.stringify(offers), { status: 200 });
     } catch (error) {

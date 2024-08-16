@@ -21,6 +21,9 @@ export async function GET(req) {
       include: {
         user: true,
       },
+      orderBy: {
+        id: 'desc',
+      },
     });
     return NextResponse.json(products, { status: 200 });
   } catch (error) {

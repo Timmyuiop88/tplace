@@ -121,8 +121,8 @@ export default function Products() {
        
             key={product.id}
         position={'relative'}
-     
-            height={["300px","400px","500px","500px"]}
+     height={'auto'}
+            minHeight={["300px","400px","500px","500px"]}
             display="flex"
             flexDirection="column"
             alignItems="center"
@@ -136,6 +136,11 @@ export default function Products() {
               >
                 {wishlist.includes(product.id) ? <FaHeart /> : <FaRegHeart />}
               </Box>
+              <Box maxH={'150px'} maxW={'300px'}
+              overflow={'hidden'}
+              >
+
+           
             <Image
               src={product.mainPhoto}
               alt={product.title}
@@ -143,6 +148,7 @@ export default function Products() {
               height={300}
               style={{ borderRadius: "10px" }}
             />
+               </Box>
             <Box w={"full"} h={"auto"}>
               <Text
               casing={'capitalize'}
