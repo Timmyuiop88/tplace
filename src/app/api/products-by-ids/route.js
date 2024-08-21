@@ -1,37 +1,62 @@
 import { PrismaClient } from '@prisma/client';
-import { authorize } from '../middleware'; // Adjust the path as needed
 import { getServerSession } from 'next-auth';
-import { NextResponse } from 'next/server';
-import { authOptions } from '../auth/[...nextauth]/route';  
+import { authOptions } from '../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
 
-export const POST = async (req) => {
+export const GET = async (request) => {
   const session = await getServerSession( authOptions);
 
   // If there's no session, return a 401 (Unauthorized) response
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 
+  const { searchParams } = new URL(request.url);
+  const id = parseInt(searchParams.get('id'));
 
-  const { id } = await req.json(); // Expecting a single 'id' instead of 'ids'
+  if (!id) {
+    return new Response(JSON.stringify({ error: 'Product ID is required' }), {
+      status: 400,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
 
   try {
     const product = await prisma.product.findUnique({
       where: {
-        id: id, // Use the unique id to fetch a single product
+        id,
+      },
+      include: {
+        user: true,
       },
     });
-    
+
     if (!product) {
-      return new Response(JSON.stringify({ error: 'Product not found' }), { status: 404 });
+      return new Response(null);
     }
-    
-    return new Response(JSON.stringify(product), { status: 200 });
+
+    return new Response(JSON.stringify(product), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     console.error('Failed to fetch product', error);
-    return new Response(JSON.stringify({ error: 'Failed to fetch product' }), { status: 500 });
+    return new Response(JSON.stringify({ error: 'Failed to fetch product' }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } finally {
     await prisma.$disconnect();
   }

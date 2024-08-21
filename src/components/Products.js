@@ -15,6 +15,7 @@ import { Box, SimpleGrid, Spinner, Text, Button, Tag,useDisclosure,
   useToast
  } from "@chakra-ui/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
 import { FaUserCircle } from "react-icons/fa";
@@ -42,7 +43,7 @@ export default function Products() {
   const [errorMessage, setErrorMessage] = useState('');
   const [message, setMessage] = useState('');
  
-
+  const router = useRouter();
 
   const handleProductClick = (product) => {
     setSelectedProduct(product);
@@ -118,6 +119,7 @@ export default function Products() {
             const isProductInWishlist = wishlist.some(item => item.id === product.id);
           return(
             <Box
+            onClick={()=> router.push(`/product/${product.id}`)}
        
             key={product.id}
         position={'relative'}

@@ -26,7 +26,9 @@ import { FaCircleDollarToSlot } from "react-icons/fa6";
 import useUser from "@/app/hooks/useUser";
 import Link from "next/link";
 import { MdOutlineAddBox } from "react-icons/md";
+import { useRouter } from "next/navigation";
 function StatsCard(props) {
+  const router =useRouter()
   const { title, stat, icon } = props;
   return (
     <Stat
@@ -54,7 +56,7 @@ function StatsCard(props) {
           {icon}
         </Box>
       </Flex>
-      <Button color={'orange'} size={'xs'} fontSize={'10px'} mt={'10px'} ml={'10px'}>Topup</Button>
+      <Button onClick={()=>router.push('/topup')} color={'orange'} size={'xs'} fontSize={'10px'} mt={'10px'} ml={'10px'}>Topup</Button>
     </Stat>
   );
 }

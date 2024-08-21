@@ -13,6 +13,11 @@ const fetchProducts = async () => {
   const { data } = await axios.get('/api/products');
   return data;
 };
+const fetchProductsById = async(id)=>{
+  
+  const { data } = await axios.get(`/api/products-by-ids?id=${id}`)
+  return data
+}
 
 const useProducts = () => {
     const queryConfig = {
@@ -43,6 +48,21 @@ const useProducts = () => {
   };
 
   return { products, isLoading, error, };
+};
+export const useProductsID = (id) => {
+  const queryConfig = {
+    refetchOnWindowFocus: true,
+    refetchInterval: 60000,
+    refetchIntervalInBackground: true,
+  };
+
+  const { data: products, isFetching, error } = useQuery({
+    queryKey: ['product', id],
+    queryFn: async () => await fetchProductsById(parseInt(id)),
+    ...queryConfig,
+  });
+
+  return { products, isFetching, error };
 };
 
 export default useProducts;
