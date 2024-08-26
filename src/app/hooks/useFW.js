@@ -1,8 +1,11 @@
 import React from 'react';
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
-import { Button } from '@chakra-ui/react';
+import { Button, useToast } from '@chakra-ui/react';
+import { useRouter } from "next/navigation";
 
 export default function FWBTN(props) {
+    const toast = useToast();
+    const router = useRouter();
   const config = {
     public_key: 'FLWPUBK_TEST-10e9a65064ee75f8b146a82f701d36ff-X',
     tx_ref: Date.now(),
@@ -27,20 +30,56 @@ export default function FWBTN(props) {
 
    
 
-      <Button
-      w={'full'} bg={'orange'} mt={'10px'} color={'#fff'}
-        onClick={() => {
-          handleFlutterPayment({
-            callback: (response) => {
-               console.log(response);
-                closePaymentModal() // this will close the modal programmatically
-            },
-            onClose: () => {},
-          });
-        }}
-      >
-        Pay
-      </Button>
+    <Button
+  w={'full'} bg={'orange'} mt={'10px'} color={'#fff'}
+  onClick={() => {
+    handleFlutterPayment({
+      callback: async (response) => {
+        if (response.status === 'completed' && response.charge_response_message === 'Approved Successful') {
+          // Make a POST request to the payment success API route
+          try {
+            const res = await fetch('/api/paymentSuccess/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                amount: response.amount,  // Replace with the actual amount from the response
+                points: response.charged_amount / 100,  // Replace with the actual points logic
+                currency: response.currency || 'NGN',  // Replace with actual currency
+                paymentMethod: 'Flutterwave',
+                transactionId: response.transaction_id,  // Use the correct transaction ID field
+              }),
+            });
+
+            if (res.ok) {
+              const data = await res.json();
+              
+              toast({
+                title: 'Topup successful!',
+                status: 'success',
+                position: 'top-right',
+                duration: 9000,
+                isClosable: true,
+              })
+              console.log('Payment success and points updated:', data);
+            } else {
+              console.error('Failed to update points or add transaction:', res.status);
+            }
+          } catch (error) {
+            console.error('Error during the API request:', error);
+          }
+        }
+   
+router.push('/')
+
+      },
+      onClose: () => {},
+    });
+  }}
+>
+  Pay
+</Button>
 
   );
 }

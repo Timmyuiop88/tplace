@@ -62,7 +62,38 @@ const ProductList = ({ params }) => {
   if (isFetching) return <Loading />;
 
 
-  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setSuccessMessage('');
+    setErrorMessage('');
+
+    try {
+      const response = await axios.post('/api/offers', {
+        amount : sliderValue,
+        message,
+        productId: products.id,
+      });
+      
+      if (response.status === 201) {
+        onClose()
+        setSuccessMessage('Offer created successfully!');
+        toast({
+            title: 'Offer created successfully!',
+            status: 'success',
+            position: 'top-right',
+            duration: 9000,
+            isClosable: true,
+          })
+        
+      }
+    } catch (error) {
+      setErrorMessage('Failed to create offer.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
    <>
 

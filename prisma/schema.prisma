@@ -29,6 +29,8 @@ model User {
 
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+
+  Transaction Transaction[]
 }
 
 model Account {
@@ -107,6 +109,8 @@ model Product {
   offers        Offer[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  Transaction Transaction[]
 }
 
 model Offer {
@@ -129,4 +133,20 @@ model AcceptedOffer {
   offer       Offer     @relation(fields: [offerId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+model Transaction {
+  id            Int       @id @default(autoincrement())
+  amount        Float
+  currency      String
+  status        String
+  paymentMethod String    // Could be card, PayPal, etc.
+  transactionId String?   // External payment gateway transaction ID
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  type          String    // Could be "purchase_points", "purchase_product", etc.
+  points        Int?      // In case the transaction involves buying points
+  productId     Int?      // Optional if transaction involves a product purchase
+  product       Product?  @relation(fields: [productId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }

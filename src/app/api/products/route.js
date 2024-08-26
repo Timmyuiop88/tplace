@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import { authOptions } from '../auth/[...nextauth]/route'; // Adjust the path as necessary
+import { usePoints } from '../utils/usePoints';
 
 const prisma = new PrismaClient();
 
@@ -50,7 +51,9 @@ export async function POST(req) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
+
   try {
+    await usePoints(session.user.id, 10);
     const newProduct = await prisma.product.create({
       data: {
         title,

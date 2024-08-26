@@ -55,8 +55,10 @@ export default function Offers() {
         justifyContent={'space-between'}
         alignItems={'center'}
         color={'white'}
+
+
       >
-        <Button color={'white'} bg={'none'} leftIcon={<IoChevronBackSharp />}>
+        <Button onClick={()=> router.back()} color={'white'} bg={'none'} leftIcon={<IoChevronBackSharp />}>
           Back
         </Button>
         <Text mr={'20px'} fontSize={'15px'} fontWeight={'600'}>
