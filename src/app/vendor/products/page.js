@@ -63,8 +63,8 @@ export default function Search() {
             {isLoading  ? (
               // Display skeleton when loading
             <>
-            <Skeleton pt={'10px'} mb={'10px'} height="100px" />
-              <Skeleton height="100px" />
+            <Skeleton borderRadius={'10px'} pt={'10px'} mb={'10px'} height="100px" />
+              <Skeleton borderRadius={'10px'} height="100px" />
             </>  
             ) : ownerProducts && ownerProducts.length > 0 ? (
               // Display products in a list

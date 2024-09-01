@@ -1,6 +1,6 @@
 'use client';
 import Bottom from "@/components/BottomNav";
-import { Box, Button, Text, Accordion, Spinner, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Tabs, TabList, TabPanels, Tab, TabPanel, Tag } from "@chakra-ui/react";
+import { Box, Button, Text, Accordion, Spinner, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Tabs, TabList, TabPanels, Tab, TabPanel, Tag, Skeleton } from "@chakra-ui/react";
 import { IoChevronBackSharp } from "react-icons/io5";
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -37,9 +37,7 @@ export default function Offers() {
     }
   };
 
-  if (loading) {
-    return <Loading />;
-  }
+
 
   if (!session) {
     router.push('/login');
@@ -72,7 +70,10 @@ export default function Offers() {
           <Tab>Pending Offers</Tab>
           <Tab>Accepted Offers</Tab>
         </TabList>
-        <TabPanels>
+        {loading? <Box px={'20px'}>
+        <Skeleton borderRadius={'10px'} w={'full'} h={'70px'} mt={'10px'} />
+        </Box> : 
+           <TabPanels>
           <TabPanel>
             <Accordion allowToggle allowMultiple={false}>
               {pendingOffers.length > 0 ? (
@@ -168,6 +169,8 @@ export default function Offers() {
             </Accordion>
           </TabPanel>
         </TabPanels>
+        }
+     
       </Tabs>
       <Bottom />
     </Box>

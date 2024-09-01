@@ -119,8 +119,8 @@ export default function Offers() {
 
         {isLoading ? (
           <Box py={'10px'} w={'full'} px={'10px'}>
-            <Skeleton pt={'20px'} mb={'10px'} height="70px" />
-            <Skeleton height="70px" />
+            <Skeleton borderRadius={'10px'} pt={'20px'} mb={'10px'} height="70px" />
+            <Skeleton borderRadius={'10px'} height="70px" />
           </Box>
         ) : (
           <TabPanels>
