@@ -7,6 +7,9 @@ import { useSession } from 'next-auth/react';
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { MdCall, MdRemoveRedEye } from "react-icons/md";
+import { FaCheck } from "react-icons/fa6";
+import { GiCancel } from "react-icons/gi";
+
 import {
     useQuery,
     useMutation,
@@ -157,10 +160,10 @@ export default function Offers() {
                         <Text color={'orange'} fontWeight={'500'} alignItems={'center'} display={'flex'} fontSize={'12px'}>Message: </Text>
                         <Text fontWeight={'500'} fontSize={'16px'}>{offer.message}</Text>
                         <Box py={'10px'} w={'full'} h={'auto'} display={'flex'} justifyContent={'space-between'}>
-                          <Button h={'35px'} isLoading={mutation.isLoading} fontSize={'12px'} leftIcon={<MdRemoveRedEye />} onClick={() => handleReject(offer.id)}>
+                          <Button h={'35px'} isLoading={mutation.isLoading} fontSize={'12px'} leftIcon={<GiCancel />} onClick={() => handleReject(offer.id)}>
                             Reject
                           </Button>
-                          <Button h={'35px'} isLoading={mutation.isLoading}  fontSize={'12px'} color={'white'} colorScheme={'orange'} leftIcon={<MdCall />} onClick={() => handleAccept(offer.id)}>
+                          <Button h={'35px'} isLoading={mutation.isLoading}  fontSize={'12px'} color={'white'} colorScheme={'orange'} leftIcon={<FaCheck />} onClick={() => handleAccept(offer.id)}>
                             Accept
                           </Button>
                         </Box>
@@ -204,10 +207,10 @@ export default function Offers() {
                         <Text color={'orange'} fontWeight={'500'} alignItems={'center'} display={'flex'} fontSize={'12px'}>Message: </Text>
                         <Text fontWeight={'500'} fontSize={'16px'}>{offer.message}</Text>
                         <Box py={'10px'} w={'full'} h={'auto'} display={'flex'} justifyContent={'space-between'}>
-                          <Button h={'35px'} fontSize={'12px'} leftIcon={<MdRemoveRedEye />}>
+                          <Button h={'35px'} fontSize={'12px'} leftIcon={<GiCancel />}>
                             Delete
                           </Button>
-                          <Button h={'35px'} fontSize={'12px'} color={'white'} colorScheme={'orange'} leftIcon={<MdCall />}>
+                          <Button h={'35px'} fontSize={'12px'} color={'white'} colorScheme={'orange'} leftIcon={<FaCheck />}>
                             Mark as Sold
                           </Button>
                         </Box>

@@ -172,7 +172,7 @@ bg={'grey.100'}
   </Button>
 </Box>
 </Link>
-<Link  href={'/vendor/offers'}>
+<Link  href={'/vendor/history'}>
 <Box
 pt={
   '10px'
