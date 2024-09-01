@@ -98,9 +98,10 @@ export default function Header() {
         placement="left"
         onClose={onClose}
         finalFocusRef={btnRef}
+        
       >
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent overflowY={'scroll'}>
           <DrawerCloseButton />
           <Box h={'auto'} w={"full"} bg={"orange"} display={'flex'} alignItems={'center'} p={'20px'} pt={'40px'}>
             <StatsCard
