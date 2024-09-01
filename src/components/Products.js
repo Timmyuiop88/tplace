@@ -119,6 +119,7 @@ export default function Products() {
             const isProductInWishlist = wishlist.some(item => item.id === product.id);
           return(
             <Box
+
             onClick={()=> router.push(`/product/${product.id}`)}
        
             key={product.id}

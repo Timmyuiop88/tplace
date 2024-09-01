@@ -27,8 +27,8 @@ const useUser = () => {
   };
   const { data: user, isLoading, error } = useQuery({ queryKey: ['user'], queryFn: fetchUser });
 
-
-  return { user, loading: isLoading, error };
+const isEmailVerified = user?.emailVerified
+  return { user, loading: isLoading, error, isEmailVerified };
 };
 
 export default useUser;
