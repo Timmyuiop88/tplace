@@ -191,7 +191,7 @@ const [loading, isLoading] = useState(false)
     <>
       <Box
 
-mt={'200px'}
+mt={'300px'}
         rounded="lg"
         maxWidth={800}
         p={6}
@@ -204,6 +204,8 @@ mt={'200px'}
 
         </Box>
         <Progress
+        mt={'10px'}
+        borderRadius={'10px'}
           colorScheme={'orange'}
           hasStripe
           value={progress}

@@ -44,7 +44,7 @@ export async function GET(req) {
         email: true,
         lastName: true,
         firstName: true,
-
+emailVerified:true,
         points: true,
         offers: {
           select: { id: true },

@@ -12,7 +12,8 @@ import { Box, SimpleGrid, Spinner, Text, Button, Tag,useDisclosure,
   SliderThumb,
   SliderMark,
   Textarea,
-  useToast
+  useToast,
+  Skeleton
  } from "@chakra-ui/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -83,23 +84,11 @@ export default function Products() {
   };
 
 
-  if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="300px"
-      >
-        <Spinner size="xl" />
-      </Box>
-    );
-  }
 
 
   return (
     <Box w={"full"} maxW={"7xl"} px={"10px"} py={"10px"} m={"auto"}>
-      {products.length === 0 ? (
+      {products?.length === 0 ? (
         <Box
           display="flex"
           justifyContent="center"
@@ -114,13 +103,20 @@ export default function Products() {
           spacing="10px"
           justifyContent={"center"}
         >
-          {products.map((product) => {
+          {
+          isLoading? (<>
+<Skeleton h={'250px'}w={'auto'}   borderRadius={"10px"} />
+<Skeleton h={'250px'}w={'auto'}   borderRadius={"10px"}/>
+<Skeleton h={'250px'}w={'auto'}    borderRadius={"10px"}/>
+<Skeleton h={'250px'}w={'auto'}    borderRadius={"10px"}/>
+          </>) : 
+            products.map((product) => {
             const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
             const isProductInWishlist = wishlist.some(item => item.id === product.id);
           return(
             <Box
 
-            onClick={()=> router.push(`/product/${product.id}`)}
+           
        
             key={product.id}
         position={'relative'}
@@ -152,7 +148,7 @@ export default function Products() {
               style={{ borderRadius: "10px" }}
             />
                </Box>
-            <Box w={"full"} h={"auto"}>
+            <Box w={"full"} h={"auto"}  onClick={()=> router.push(`/product/${product.id}`)}>
               <Text
               casing={'capitalize'}
                 noOfLines={1}
@@ -163,12 +159,12 @@ export default function Products() {
                 {product.title}
               </Text>
             </Box>
-            <Box w={"full"} h={"auto"}>
+            <Box w={"full"} h={"auto"}  onClick={()=> router.push(`/product/${product.id}`)}>
               <Text textAlign={"left"} fontSize={"15"} fontWeight={"600"}>
                 ${product.price}
               </Text>
             </Box>
-            <Box w={"full"} h={"auto"} py={"5px"}>
+            <Box w={"full"} h={"auto"} py={"5px"}  onClick={()=> router.push(`/product/${product.id}`)}>
               <Text textAlign={"left"} fontSize={"12px"} fontWeight={"600"}>
                 {product.description}
               </Text>

@@ -1,7 +1,11 @@
+import TradePlaceWelcomeEmail from '@/components/emailTemplate';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { Resend } from 'resend';
+
 
 const prisma = new PrismaClient();
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req) {
   try {
@@ -33,6 +37,14 @@ export async function POST(req) {
       },
     });
 
+    // Send registration email
+    await resend.emails.send({
+      from: 'TradePlace <onboarding@quantumassetvault.co>',
+      to: [email],
+      subject: 'Welcome to TradePlace!',
+      react: TradePlaceWelcomeEmail(), // Pass user info to the email template
+    });
+
     return new Response(
       JSON.stringify({ message: 'User created successfully', user: newUser }),
       { status: 201 }
@@ -41,7 +53,7 @@ export async function POST(req) {
     console.error('Error in signup route:', error);
 
     // Check for specific Prisma error codes
-    if (error.code === 'P2002' && error.meta.target.includes('email')) {
+    if (error.code === 'P2002' || error?.meta?.target?.includes('email')) {
       return new Response(
         JSON.stringify({ error: 'Email is already in use' }),
         { status: 409 }

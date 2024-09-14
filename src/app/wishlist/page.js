@@ -64,7 +64,7 @@ export default function Offers(){
 <Box
 px={'10px'}
 w={'full'}
-h={'50px'}
+h={["70px", "70px", "70px", "80px"]}
 bg={'orange'}
 display={'flex'}
 justifyContent={'space-between'}
@@ -72,12 +72,14 @@ alignItems={'center'}
 color={'white'}
 >
 <Button
+onClick={() => router.back()}
 color={'white'}
 bg={'none'}
  leftIcon={<IoChevronBackSharp />}
 >
     Back
 </Button>
+<Image src={'/img/logo-light.png'} alt="logo" width={200} height={400} />
 <Text mr={'20px'} fontSize={'15px'} fontWeight={'600'}>
     Wishlist
 </Text>

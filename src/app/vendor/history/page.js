@@ -1,20 +1,15 @@
 'use client';
+
 import Bottom from "@/components/BottomNav";
 import {
   Box,
   Button,
   Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  useToast,
+  Stack,
   Skeleton,
   Tag,
+  useToast,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { IoChevronBackSharp } from "react-icons/io5";
 import { useEffect, useState } from 'react';
@@ -22,13 +17,14 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from "next/navigation";
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { FaDollarSign, FaCreditCard, FaMoneyBillWave } from 'react-icons/fa';
 
 export default function TransactionHistory() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const toast = useToast();
 
-  // Correct use of useQuery with object form
+  // Fetch transaction data
   const { data: transactions, isLoading, error } = useQuery({
     queryKey: ['transactions'],
     queryFn: async () => {
@@ -64,8 +60,9 @@ export default function TransactionHistory() {
   }
 
   return (
-    <Box h={'100vh'} w={'100%'} maxW={'7xl'} m={'auto'} bg={'white'}>
+    <Box h={'100vh'} w={'100%'} maxW={'7xl'} m={'auto'} bg={'white'} p={4}>
       <Box
+        mb={4}
         px={'10px'}
         w={'full'}
         h={'50px'}
@@ -78,52 +75,51 @@ export default function TransactionHistory() {
         <Button color={'white'} bg={'none'} leftIcon={<IoChevronBackSharp />} onClick={() => router.back()}>
           Back
         </Button>
-        <Text mr={'20px'} fontSize={'15px'} fontWeight={'600'}>
+        <Text fontSize={'15px'} fontWeight={'600'}>
           Billing
         </Text>
       </Box>
 
-      <TableContainer>
-        <Table variant="simple">
-          <TableCaption>Transaction History</TableCaption>
-          <Thead>
-            <Tr>
-              <Th>Amount</Th>
-              <Th>Payment Method</Th>
-            
-              <Th>Status</Th>
-         
-       
-             
-              <Th>Type</Th>
-           
-              <Th>Date</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {transactions && transactions.map((transaction) => (
-              <Tr key={transaction.id}>
-                <Td>{transaction.currency} {transaction.amount}</Td>
-                <Td>{transaction.paymentMethod}</Td>
-             
-                <Td>
-                    <Tag
-                    colorScheme={transaction.status === 'completed' ? 'teal' : 'red'}
-                    >
-                    {transaction.status}
-                    </Tag>
-                   </Td>
-             
-                <Td>{transaction.type}</Td>
-              
-            
-                <Td>{new Date(transaction.createdAt).toLocaleDateString()}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      
+      <Stack spacing={4}>
+        {transactions && transactions.map((transaction) => (
+          <Box
+            key={transaction.id}
+            p={5}
+            shadow="md"
+            borderWidth="1px"
+            borderRadius="md"
+            bg="white"
+            display="flex"
+            flexDirection="column"
+            justifyContent="space-between"
+          >
+            <Stack spacing={3}>
+              <Text fontSize="xl" fontWeight="bold">
+                {transaction.currency} {transaction.amount}
+              </Text>
+              <Text fontSize="md">
+                <Tag
+                  colorScheme={transaction.status === 'completed' ? 'teal' : 'red'}
+                >
+                  {transaction.status}
+                </Tag>
+              </Text>
+              <Text fontSize="md">
+                <Box as={FaCreditCard} mr={2} />
+                {transaction.paymentMethod}
+              </Text>
+              <Text fontSize="md">
+                <Box as={FaMoneyBillWave} mr={2} />
+                {transaction.type}
+              </Text>
+              <Text fontSize="sm" color="gray.500">
+                {new Date(transaction.createdAt).toLocaleDateString()}
+              </Text>
+            </Stack>
+          </Box>
+        ))}
+      </Stack>
+
       <Bottom />
     </Box>
   );

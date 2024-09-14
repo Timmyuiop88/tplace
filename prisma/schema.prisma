@@ -31,6 +31,8 @@ model User {
   updatedAt      DateTime  @updatedAt
 
   Transaction Transaction[]
+
+  KYCApplication KYCApplication[]
 }
 
 model Account {
@@ -150,3 +152,15 @@ model Transaction {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
+model KYCApplication {
+  id          Int     @id @default(autoincrement())
+  userId      String       // Foreign key to the User model
+  idFront     String    // URL or path to the front side of the ID document
+  idBack      String    // URL or path to the back side of the ID document
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user        User      @relation(fields: [userId], references: [id])
+}
+

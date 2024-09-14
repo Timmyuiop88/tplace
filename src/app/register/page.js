@@ -20,6 +20,7 @@ import {
   AbsoluteCenter,
   Alert,
   AlertIcon,
+  Heading,
 } from '@chakra-ui/react';
 import { FcGoogle } from 'react-icons/fc';
 import { BsLinkedin } from 'react-icons/bs';
@@ -125,20 +126,16 @@ export default function SignupForm() {
             flexDirection="column"
             alignItems="center"
           >
-            <Image display='none' alt="logo" width="100px" height="50px" />
+            <Image src={'/img/logo.png'} alt="logo" width={200} height={400} />
 
             <HStack display="flex" flexDirection="row" spacing="20px">
-              <Button>
-                <HStack spacing={1}>
-                  <FcGoogle /> <Text>Google</Text>
-                </HStack>
-              </Button>
+              
               
             </HStack>
 
             <Box position="relative" padding="10px">
-              <Divider colorScheme="black" />
-              <AbsoluteCenter px="4">or</AbsoluteCenter>
+              
+              <Heading fontSize={'20px'} px="4">Sign Up</Heading>
             </Box>
           </Box>
         </Box>
@@ -202,7 +199,7 @@ export default function SignupForm() {
                 </Checkbox>
               </ListItem>
 
-              <ListItem display="flex" justifyContent="center" w="100%" pt="20px">
+              <ListItem  flexDirection="column" gap={'10px'} display="flex" justifyContent="center" w="100%" pt="20px">
                 <Button
                   bg="#f68950"
                   p="10px"
@@ -214,13 +211,18 @@ export default function SignupForm() {
                 >
                   Create Account
                 </Button>
+                <Button>
+                <HStack spacing={1}>
+                  <FcGoogle /> <Text>Google</Text>
+                </HStack>
+              </Button>
               </ListItem>
 
               <ListItem display="flex" justifyContent="center" w="100%" p="20px">
                 <Text fontSize="12px">
                   Already have an account?{' '}
                   <span style={{ color: '#f68950', textDecoration: 'underline' }}>
-                    <Link href="/auth/login">Log in</Link>
+                    <Link href="/login">Log in</Link>
                   </span>
                 </Text>
               </ListItem>

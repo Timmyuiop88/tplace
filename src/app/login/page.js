@@ -16,7 +16,8 @@ import {
     HStack,
     Text,
     Divider,
-    AbsoluteCenter
+    AbsoluteCenter,
+    Heading
 } from '@chakra-ui/react';
 import { FcGoogle } from "react-icons/fc";
 import { BsLinkedin } from "react-icons/bs";
@@ -24,6 +25,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from 'react';
 import { useSession } from "next-auth/react";
+
 
 export default function Page() {
 
@@ -110,19 +112,15 @@ export default function Page() {
                         flexDirection={"column"}
                         alignItems={"center"}
                     >
-                        <Image alt="logo" src={"/authlogo.svg"} width={50} height={50} />
-                        <Text pt={"20px"} pb={"20px"}>Log in</Text>
+                        <Image alt="logo" src={"/img/logo.png"} width={200} height={400} />
+                        
                         <HStack display={"flex"} flexDirection={"row"} spacing={"20px"}>
-                            <Button>
-                                <HStack spacing={1}>
-                                    <FcGoogle /> <Text>Google</Text>
-                                </HStack>
-                            </Button>
+                          
                            
                         </HStack>
                         <Box position="relative" padding="10px">
-                            <Divider colorScheme={"black"} />
-                            <AbsoluteCenter px="4">or</AbsoluteCenter>
+                        <Heading fontSize={'20px'} px="4">Sign In</Heading> 
+                         
                         </Box>
                     </Box>
                 </Box>
@@ -173,11 +171,15 @@ export default function Page() {
                                 </ListItem>
                                 <ListItem
                                     display={"flex"}
+                                    flexDirection={'column'}
+                                    gap={'10px'}
                                     justifyContent={"center"}
                                     w={"100%"}
                                     pt={"20px"}
                                 >
                                     <Button
+
+
                                         isLoading={loading}
                                         bg={"#f68950"}
                                         p={"10px"}
@@ -188,6 +190,13 @@ export default function Page() {
                                     >
                                         Log in
                                     </Button>
+                                    <Button
+                                      w={"full"}
+                                    >
+                                <HStack spacing={1}>
+                                    <FcGoogle /> <Text>Google</Text>
+                                </HStack>
+                            </Button>
                                 </ListItem>
                                 <ListItem
                                     display={"flex"}
