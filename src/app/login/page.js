@@ -112,7 +112,7 @@ export default function Page() {
                         flexDirection={"column"}
                         alignItems={"center"}
                     >
-                        <Image alt="logo" src={"/img/logo.png"} width={200} height={400} />
+                        <Image alt="logo" src={"/img/logo.png"} width={140} height={300} />
                         
                         <HStack display={"flex"} flexDirection={"row"} spacing={"20px"}>
                           

@@ -66,7 +66,7 @@ export const POST = async (req) => {
     });
   } catch (error) {
     console.error('Error confirming verification code:', error);
-    return new Response(JSON.stringify({ error: 'Failed to confirm verification code' }), {
+    return new Response(JSON.stringify( { error: error}), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

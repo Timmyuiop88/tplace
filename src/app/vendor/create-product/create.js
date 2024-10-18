@@ -15,6 +15,7 @@ import {
   SimpleGrid,
   Textarea,
   useToast,
+  Select
 } from '@chakra-ui/react';
 import { useEdgeStore } from '@/app/edgeProvider';
 import { SingleImageDropzone } from '@/components/singleImage';
@@ -31,6 +32,19 @@ const initialFormData = {
   photos: [],
 };
 
+
+const popularCategories = [
+  { id: 1, name: 'Electronics' },
+  { id: 2, name: 'Fashion' },
+  { id: 3, name: 'Home & Garden' },
+  { id: 4, name: 'Beauty & Health' },
+  { id: 5, name: 'Sports & Outdoors' },
+  { id: 6, name: 'Automotive' },
+  { id: 7, name: 'Toys & Games' },
+  { id: 8, name: 'Books' },
+  { id: 9, name: 'Music' },
+  { id: 10, name: 'Mobile & Gadgets' },
+];
 const Form1 = ({ formData, handleChange }) => {
   return (
     <>
@@ -243,12 +257,18 @@ mt={'300px'}
               <FormLabel htmlFor="category" fontWeight={'normal'}>
                 Category
               </FormLabel>
-              <Input
-                id="category"
-                placeholder="Category"
-                value={formData.category}
-                onChange={handleChange}
-              />
+              <Select
+      id="category"
+      placeholder="Select a category"
+      value={formData.category}
+      onChange={handleChange}
+    >
+      {popularCategories.map(category => (
+        <option key={category.id} value={category.name}>
+          {category.name}
+        </option>
+      ))}
+    </Select>
             </FormControl>
           </>
         ) : (

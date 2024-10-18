@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import { Resend } from 'resend';
-import crypto from 'crypto';  // Not needed for generating numeric codes
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
 import { TradePlaceVerificationEmail } from '@/components/emailTemplate';
@@ -19,7 +18,15 @@ export const POST = async (req) => {
   }
 
   try {
+    // Parse the request body to get the email
     const { email } = await req.json();
+
+    if (!email) {
+      return new Response(JSON.stringify({ error: 'Email is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     // Check if the user exists
     const user = await prisma.user.findUnique({
@@ -44,13 +51,15 @@ export const POST = async (req) => {
         expires: new Date(Date.now() + 3600000), // Token expires in 1 hour
       },
     });
-console.log({code})
+
+    console.log({ code });
+
     // Send verification email
     await resend.emails.send({
       from: 'TradePlace <onboarding@quantumassetvault.co>',
-      to: [email],
+      to: [email],  // 'to' must be an array
       subject: 'Verify Your Email Address',
-      react: <TradePlaceVerificationEmail verificationCode={code}/>,
+      react: <TradePlaceVerificationEmail verificationCode={code} />,
     });
 
     return new Response(JSON.stringify({ message: 'Verification email sent' }), {

@@ -20,30 +20,42 @@ const fetchUser = async () => {
 };
 
 const sendVerificationCode = async (email) => {
-  const response = await fetch('/api/verify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email }),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to send verification code');
+  try {
+    console.log({ email });
+    
+    const response = await fetch('/api/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }), // Ensure body is a JSON string
+    });
+
+    if (!response.ok) {
+      console.log({ response });
+      throw new Error('Failed to send verification code');
+    }
+
+    return await response.json(); // Await the parsed response
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error; // Rethrow the error for further handling if needed
   }
-  return response.json();
 };
+
 
 const confirmVerificationCode = async ({ email, code }) => {
-  const response = await fetch('/api/confirm-verification', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, code }),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to verify code');
+  try {
+    const response = await axios.post('/api/verify/confirm', {
+      email,
+      code,
+    });
+
+    return response.data;  // Return the parsed data
+  } catch (error) {
+     throw new Error(error.response.data.error|| 'Failed to confirm verification code');
   }
-  return response.json();
 };
 
-const useUser = () => {
+const useUser = (setIsVerifying) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -54,9 +66,10 @@ const useUser = () => {
 
   const isEmailVerified = user?.emailVerified;
 
-  const { mutate: sendVerificationCodeMutation, isLoading: isVerifying } = useMutation({
+  const { mutateAsync: sendVerificationCodeMutation } = useMutation({
     mutationFn: sendVerificationCode,
     onSuccess: (data) => {
+      setIsVerifying(false)
       toast({
         title: "Verification Code Sent",
         description: `A code has been sent to ${user?.email}`,
@@ -78,7 +91,7 @@ const useUser = () => {
     },
   });
 
-  const { mutate: confirmVerificationCodeMutation, isLoading: isConfirming } = useMutation({
+  const { mutateAsync: confirmVerificationCodeMutation,isPending: isConfirming } = useMutation({
     mutationFn: confirmVerificationCode,
     onSuccess: (data) => {
       toast({
@@ -91,6 +104,7 @@ const useUser = () => {
       });
     },
     onError: (error) => {
+      setIsVerifying(false)
       toast({
         title: "Error",
         description: error.message,
@@ -102,7 +116,7 @@ const useUser = () => {
     },
   });
 
-  return { user, loading: isLoading, error, isEmailVerified, sendVerificationCodeMutation, isVerifying, confirmVerificationCodeMutation, isConfirming };
+  return { user, loading: isLoading, error, isEmailVerified, sendVerificationCodeMutation, confirmVerificationCodeMutation, isConfirming, isLoading };
 };
 
 export default useUser;

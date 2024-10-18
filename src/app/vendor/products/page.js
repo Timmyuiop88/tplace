@@ -35,6 +35,7 @@ import axios from "axios";
 import { useProductOwner } from "@/app/hooks/useProducts";
 
 export default function Search() {
+
     const toast = useToast()
   const [searchTerm, setSearchTerm] = useState('');
   const [triggerSearch, setTriggerSearch] = useState(false);
@@ -48,7 +49,10 @@ export default function Search() {
   const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const { ownerProducts, isLoading, error } = useProductOwner();
- 
+  const handleEditProduct = (productId) => {
+    // Navigate to the product edit page
+    router.push(`/vendor/products/edit/${productId}`);
+  };
 
 
 
@@ -159,7 +163,7 @@ export default function Search() {
             </Box>
             <Box w={"full"} py={"10px"}>
               <Button
-            
+              onClick={() => handleEditProduct(product.id)}
                 bg="#f68950"
                 color={"white"}
                 alignItems={"center"}

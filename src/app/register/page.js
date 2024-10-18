@@ -126,7 +126,7 @@ export default function SignupForm() {
             flexDirection="column"
             alignItems="center"
           >
-            <Image src={'/img/logo.png'} alt="logo" width={200} height={400} />
+            <Image src={'/img/logo.png'} alt="logo" width={140} height={300} />
 
             <HStack display="flex" flexDirection="row" spacing="20px">
               

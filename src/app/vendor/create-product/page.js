@@ -32,7 +32,7 @@ bg={'none'}
 >
     Back
 </Button>
-<Image src={'/img/logo-light.png'} alt="logo" width={200} height={400} />
+<Image src={'/img/logo-light.png'} alt="logo" width={140} height={300} />
 
 </Box>
 
