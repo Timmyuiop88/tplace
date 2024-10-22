@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Bottom from "@/components/BottomNav";
 import Header from "@/components/Header";
+import { useRouter } from "next/navigation";
 import {
   Box,
   Button,
@@ -29,22 +30,25 @@ import useUser from "../hooks/useUser"; // Adjust import path as needed
 import { SingleImageDropzone } from "@/components/singleImage";
 import { useEdgeStore } from "@/app/edgeProvider";
 import { PinInput, PinInputField } from "@chakra-ui/react";
+
 const steps = [
   { title: "Email Verification", description: "Verify your email address" },
   { title: "KYC", description: "Submit your KYC documents" },
 ];
 
 export default function Become() {
-  const [isVerifying , setIsVerifying] = useState(false)
+  const [isVerifying, setIsVerifying] = useState(false);
   const {
     user,
     isEmailVerified,
     sendVerificationCodeMutation,
-  
     confirmVerificationCodeMutation,
     isConfirming,
     isLoading
   } = useUser(setIsVerifying);
+  const router = useRouter();
+
+
   const { edgestore } = useEdgeStore(); // Access edge store
   const [activeStep, setActiveStep] = useState(0);
   const [email, setEmail] = useState(user?.email);
@@ -55,7 +59,6 @@ export default function Become() {
   const [timer, setTimer] = useState(0);
   const [isLoadings, setIsLoadings] = useState(false);
 
-
   useEffect(() => {
     if (timer > 0) {
       const countdown = setInterval(() => setTimer(timer - 1), 1000);
@@ -63,7 +66,13 @@ export default function Become() {
     }
   }, [timer]);
 
- 
+  // useEffect to detect changes in isEmailVerified
+  useEffect(() => {
+    if (isEmailVerified) {
+      setActiveStep(1); // Move to the next step automatically when email is verified
+    }
+  }, [isEmailVerified]);
+
   const handleNextStep = () => {
     if (activeStep < steps.length - 1) {
       setActiveStep(activeStep + 1);
@@ -71,16 +80,14 @@ export default function Become() {
   };
 
   const handleSendVerification = (email) => {
-    setIsVerifying(true)
+    setIsVerifying(true);
     if (email) {
-      sendVerificationCodeMutation(email,{
-        onSuccess: ()=>{
+      sendVerificationCodeMutation(email, {
+        onSuccess: () => {
           setTimer(60);
         }
       });
-    
     }
-    // setTimer(60);
   };
 
   const handleVerifyCode = () => {
@@ -92,39 +99,36 @@ export default function Become() {
 
   const handleKycSubmit = async () => {
     if (kycFront && kycBack) {
-      setIsLoadings(true); // Set loading to true at the start
+      setIsLoadings(true);
       try {
-        // Upload KYC front and back images
         const frontUploadRes = await edgestore.publicFiles.upload({
           file: kycFront,
         });
-  
+
         const backUploadRes = await edgestore.publicFiles.upload({
           file: kycBack,
         });
-  
-        // Check if uploads were successful
+
         if (!frontUploadRes.url || !backUploadRes.url) {
           throw new Error("Failed to upload one or both KYC documents");
         }
-  
-        // Post KYC data to your API
+
         const response = await fetch("/api/kyc", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              userId: user?.id,
-              idFrontUrl: frontUploadRes.url,
-              idBackUrl: backUploadRes.url,
-            }),
-          });
-  
+          },
+          body: JSON.stringify({
+            userId: user?.id,
+            idFrontUrl: frontUploadRes.url,
+            idBackUrl: backUploadRes.url,
+          }),
+        });
+
         if (!response.ok) {
           throw new Error("Failed to submit KYC documents");
         }
-  
+router.push('/')
         toast({
           title: "KYC Submitted",
           description: "Your KYC documents have been submitted.",
@@ -143,7 +147,7 @@ export default function Become() {
           isClosable: true,
         });
       } finally {
-        setIsLoadings(false); // Set loading to false after completion
+        setIsLoadings(false);
       }
     } else {
       toast({
@@ -198,70 +202,68 @@ export default function Become() {
         <Box h={"auto"} pt={6}>
           {activeStep === 0 && (
             <Box>
-            {isLoading ? (
-        <Skeleton borderRadius={'15px'} w="full" height="250px" />
-      ) : !isEmailVerified ? (
-        <>
-          <FormControl>
-            <FormLabel>Email Verification</FormLabel>
-            <Box pb="10px" w="full" textAlign="center">
-              <Text fontSize="sm" color="gray.500">
-                Verification has been sent to your registered email: {user?.email}.
-              </Text>
-            </Box>
-            <HStack display="flex" justifyContent="center" w="full" pb="10px">
-              <PinInput
-                type="text"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e)}
-                otp
-              >
-                <PinInputField />
-                <PinInputField />
-                <PinInputField />
-                <PinInputField />
-                <PinInputField />
-                <PinInputField />
-              </PinInput>
-            </HStack>
-          </FormControl>
-          <Box pt="10px" w="full" display="flex" flexDirection="column" gap="10px">
-            <Button
-              isLoading={isVerifying}
-              w="full"
-              colorScheme="orange"
-              variant={'outline'}
-              onClick={()=>handleSendVerification(user?.email)}
-              isDisabled={timer > 0}
-            >
-              {timer > 0 ? `Resend in ${timer}s` : 'Send Verification Code'}
-            </Button>
-            <Button
-              isLoading={isConfirming}
-              w="full"
-              colorScheme="orange"
-              onClick={handleVerifyCode}
-            >
-              Verify Code
-            </Button>
-          </Box>
-        </>
-      ) : (
-        <Text textAlign={'center'}>Email is verified. You may proceed to the next step.</Text>
-      )}
-<Box display={'flex'} w={'full'} justifyContent={'flex-end'}>
-<Button
-size={'sm'}
-                mt={6}
-                colorScheme="purple"
-                onClick={handleNextStep}
-                isDisabled={!user?.emailVerified}
-              >
-                Next
-              </Button>
-
-</Box>
-             
+              {isLoading ? (
+                <Skeleton borderRadius={"15px"} w="full" height="250px" />
+              ) : !isEmailVerified ? (
+                <>
+                  <FormControl>
+                    <FormLabel>Email Verification</FormLabel>
+                    <Box pb="10px" w="full" textAlign="center">
+                      <Text fontSize="sm" color="gray.500">
+                        Verification has been sent to your registered email: {user?.email}.
+                      </Text>
+                    </Box>
+                    <HStack display="flex" justifyContent="center" w="full" pb="10px">
+                      <PinInput
+                        type="text"
+                        value={verificationCode}
+                        onChange={(e) => setVerificationCode(e)}
+                        otp
+                      >
+                        <PinInputField />
+                        <PinInputField />
+                        <PinInputField />
+                        <PinInputField />
+                        <PinInputField />
+                        <PinInputField />
+                      </PinInput>
+                    </HStack>
+                  </FormControl>
+                  <Box pt="10px" w="full" display="flex" flexDirection="column" gap="10px">
+                    <Button
+                      isLoading={isVerifying}
+                      w="full"
+                      colorScheme="orange"
+                      variant={"outline"}
+                      onClick={() => handleSendVerification(user?.email)}
+                      isDisabled={timer > 0}
+                    >
+                      {timer > 0 ? `Resend in ${timer}s` : "Send Verification Code"}
+                    </Button>
+                    <Button
+                      isLoading={isConfirming}
+                      w="full"
+                      colorScheme="orange"
+                      onClick={handleVerifyCode}
+                    >
+                      Verify Code
+                    </Button>
+                  </Box>
+                </>
+              ) : (
+                <Text textAlign={"center"}>Email is verified. You may proceed to the next step.</Text>
+              )}
+              <Box display={"flex"} w={"full"} justifyContent={"flex-end"}>
+                <Button
+                  size={"sm"}
+                  mt={6}
+                  colorScheme="purple"
+                  onClick={handleNextStep}
+                  isDisabled={!isEmailVerified}
+                >
+                  Next
+                </Button>
+              </Box>
             </Box>
           )}
 
@@ -303,10 +305,11 @@ size={'sm'}
               </FormControl>
 
               <Button
-              isLoading={isLoadings}
-                colorScheme="teal"
+                w={"full"}
+                isLoading={isLoadings}
                 onClick={handleKycSubmit}
-                isDisabled={!kycFront || !kycBack}
+                colorScheme={"orange"}
+                mt={6}
               >
                 Submit KYC
               </Button>
@@ -314,7 +317,6 @@ size={'sm'}
           )}
         </Box>
       </Box>
-
       <Bottom />
     </Box>
   );

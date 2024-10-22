@@ -9,6 +9,10 @@
       "destination": "/product/:id"
     },
     {
+      "source": "/vendor/products/edit/:id",
+      "destination": "/vendor/products/edit/:id"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

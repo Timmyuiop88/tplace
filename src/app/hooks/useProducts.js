@@ -26,7 +26,7 @@ const fetchProductsByName = async (name) => {
 };
 
 export const useProducts = () => {
-    const { data: products, isLoading, error } = useQuery({
+    const { data: products, isLoading, error, refetch } = useQuery({
         queryKey: ['products'],
         queryFn: fetchProducts,
         refetchOnWindowFocus: true,
@@ -55,11 +55,11 @@ export const useProducts = () => {
         );
     };
 
-    return { products, isLoading, error, handleWishlistToggle, wishlist };
+    return { products, isLoading, error, handleWishlistToggle, wishlist,refetch };
 };
 
 export const useProductsID = (id) => {
-    const { data: products, isFetching, error } = useQuery({
+    const { data: products, isFetching, error, refetch: refetchID } = useQuery({
         queryKey: ['product', id],
         queryFn: async () => await fetchProductsById(parseInt(id)),
         refetchOnWindowFocus: true,
@@ -67,7 +67,7 @@ export const useProductsID = (id) => {
         refetchIntervalInBackground: true,
     });
 
-    return { products, isFetching, error };
+    return { products, isFetching, error, refetchID };
 };
 
 export const useProductName = (name) => {
@@ -90,7 +90,7 @@ const fetchOwnerProducts = async () => {
 export const useProductOwner = () => {
   const { data: session, status } = useSession();
 
-  const { data: ownerProducts, isLoading, error } = useQuery({
+  const { data: ownerProducts, isLoading, error, refetch: refetchOwn  } = useQuery({
     queryKey: ['ownerProducts'],
     queryFn: fetchOwnerProducts,
     enabled: status === 'authenticated',  // Run the query only if the user is authenticated
@@ -99,6 +99,6 @@ export const useProductOwner = () => {
     refetchIntervalInBackground: true,
   });
 
-  return { ownerProducts, isLoading, error };
+  return { ownerProducts, isLoading, error, refetchOwn };
 };
 export default useProducts;

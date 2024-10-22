@@ -107,12 +107,14 @@ model Product {
   userId        String
   user          User      @relation("ProductUser", fields: [userId], references: [id])
   buyerId       String?
-  buyer         User?    @relation("BoughtProducts", fields: [buyerId], references: [id], onDelete: Cascade)
-  offers        Offer[]
+ buyer         User?     @relation("BoughtProducts", fields: [buyerId], references: [id], onDelete: Cascade) // Cascade delete for buyer
+  offers        Offer[] 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   Transaction Transaction[]
+
+
 }
 
 model Offer {
@@ -123,10 +125,12 @@ model Offer {
   userId          String
   user            User            @relation(fields: [userId], references: [id])
   productId       Int
-  product         Product         @relation(fields: [productId], references: [id])
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
   acceptedOffer   AcceptedOffer?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
+
+
 }
 
 model AcceptedOffer {

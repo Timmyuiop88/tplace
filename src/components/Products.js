@@ -161,7 +161,7 @@ export default function Products() {
             </Box>
             <Box w={"full"} h={"auto"}  onClick={()=> router.push(`/product/${product.id}`)}>
               <Text textAlign={"left"} fontSize={"15"} fontWeight={"600"}>
-                ${product.price}
+              &#8358;{product.price}
               </Text>
             </Box>
             <Box w={"full"} h={"auto"} py={"5px"}  onClick={()=> router.push(`/product/${product.id}`)}>

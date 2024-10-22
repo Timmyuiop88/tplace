@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Box, Button, Input, Textarea, FormControl, FormLabel, useToast, Spinner, VStack } from "@chakra-ui/react";
 import axios from "axios";
-import { useProductsID } from "@/app/hooks/useProducts";
+import useProducts, { useProductsID } from "@/app/hooks/useProducts";
 import Header from "@/components/Header"; // Reusing the same header for consistency
 
 export default function EditProduct({ params }) {
@@ -11,8 +11,8 @@ export default function EditProduct({ params }) {
   const id = parseInt(params.id); // Get product ID from URL
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { products: productData, isFetching, error: errors } = useProductsID(id);
-
+  const { products: productData, isFetching, error: errors,refetchID } = useProductsID(id);
+const {refetch} = useProducts()
   const [updatedProduct, setUpdatedProduct] = useState({
     title: '',
     description: '',
@@ -33,6 +33,7 @@ export default function EditProduct({ params }) {
     setIsSubmitting(true);
     try {
       await axios.patch(`/api/products-by-ids?id=${productData?.id}`, {
+        id: productData?.id,
         title: updatedProduct.title,
         description: updatedProduct.description,
         price: parseFloat(updatedProduct.price), // Ensure price is passed as a float
@@ -43,6 +44,7 @@ export default function EditProduct({ params }) {
         status: "success",
         isClosable: true,
       });
+      refetch()
       router.push("/"); // Redirect to the product list
     } catch (error) {
       toast({

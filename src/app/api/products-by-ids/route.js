@@ -101,3 +101,61 @@ export const PATCH = async (request) => {
     await prisma.$disconnect();
   }
 };
+// DELETE request to delete the product
+export const DELETE = async (request) => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const id = parseInt(searchParams.get('id'));
+
+  if (!id) {
+    return new Response(JSON.stringify({ error: 'Product ID is required' }), {
+      status: 400,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+
+  try {
+    // Find the product to ensure it exists
+    const product = await prisma.product.findUnique({
+      where: { id },
+    });
+
+    if (!product) {
+      return new Response(JSON.stringify({ error: 'Product not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Delete the product
+    await prisma.product.delete({
+      where: { id },
+    });
+
+    return new Response(JSON.stringify({ message: 'Product deleted successfully' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Failed to delete product', error);
+    return new Response(JSON.stringify({ error: 'Failed to delete product' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
