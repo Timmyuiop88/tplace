@@ -44,7 +44,7 @@ export async function POST(req) {
   }
 
 
-  const { title, description, price, mainPhoto, category, photos } = await req.json();
+  const { title, description, price,Latitude, mainPhoto, category, photos } = await req.json();
 
   // Validate required fields
   if (!title || !description || !price || !mainPhoto || !category || !Array.isArray(photos)) {
@@ -62,6 +62,7 @@ export async function POST(req) {
         mainPhoto,
         category,
         photos,
+        Latitude,
         userId: session.user.id, // Assuming session.user.id contains the user ID
       },
     });

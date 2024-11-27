@@ -12,79 +12,111 @@ import {
   useToast,
   FormControl,
   FormLabel,
-  Input,
-  Stepper,
-  Step,
-  StepIndicator,
-  StepStatus,
-  StepIcon,
-  StepNumber,
-  StepSeparator,
-  StepTitle,
+  VStack,
   HStack,
-  Skeleton
+  Spinner,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription
 } from "@chakra-ui/react";
-import { BsCashCoin } from "react-icons/bs";
-import { useSteps } from "@chakra-ui/react";
-import useUser from "../hooks/useUser"; // Adjust import path as needed
+import { BsCashCoin, BsCheckCircle } from "react-icons/bs";
+import useUser from "../hooks/useUser";
 import { SingleImageDropzone } from "@/components/singleImage";
 import { useEdgeStore } from "@/app/edgeProvider";
 import { PinInput, PinInputField } from "@chakra-ui/react";
 
-const steps = [
-  { title: "Email Verification", description: "Verify your email address" },
-  { title: "KYC", description: "Submit your KYC documents" },
-];
+const KYCStatusBanner = ({ status }) => {
+  const statusConfig = {
+    pending: {
+      color: "orange",
+      icon: BsCashCoin,
+      title: "Application Pending",
+      description: "Your vendor application is under review."
+    },
+    approved: {
+      color: "green",
+      icon: BsCheckCircle,
+      title: "Application Approved",
+      description: "Congratulations! Your vendor application has been approved."
+    },
+    rejected: {
+      color: "red",
+      icon: BsCashCoin,
+      title: "Application Rejected",
+      description: "Your vendor application was not successful."
+    }
+  };
+
+  const config = statusConfig[status] || statusConfig.pending;
+
+  return (
+    <Alert 
+      status={config.color === 'orange' ? 'warning' : config.color === 'green' ? 'success' : 'error'}
+      variant="subtle"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      textAlign="center"
+      height="200px"
+      borderRadius="xl"
+      mb={6}
+    >
+      <AlertIcon as={config.icon} boxSize="40px" color={`${config.color}.500`} mb={4} />
+      <AlertTitle mt={4} mb={1} fontSize="lg">
+        {config.title}
+      </AlertTitle>
+      <AlertDescription maxWidth="sm">
+        {config.description}
+      </AlertDescription>
+    </Alert>
+  );
+};
 
 export default function Become() {
-  const [isVerifying, setIsVerifying] = useState(false);
+  const toast = useToast();
+  const router = useRouter();
+  const { edgestore } = useEdgeStore();
   const {
     user,
     isEmailVerified,
     sendVerificationCodeMutation,
     confirmVerificationCodeMutation,
     isConfirming,
-    isLoading
-  } = useUser(setIsVerifying);
-  const router = useRouter();
+    isLoading,
+    kycStatus,
+    isKYCLoading
+  } = useUser();
 
-
-  const { edgestore } = useEdgeStore(); // Access edge store
-  const [activeStep, setActiveStep] = useState(0);
   const [email, setEmail] = useState(user?.email);
   const [verificationCode, setVerificationCode] = useState("");
   const [kycFront, setKycFront] = useState(null);
   const [kycBack, setKycBack] = useState(null);
-  const toast = useToast();
   const [timer, setTimer] = useState(0);
-  const [isLoadings, setIsLoadings] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Prioritize KYC status check
   useEffect(() => {
-    if (timer > 0) {
-      const countdown = setInterval(() => setTimer(timer - 1), 1000);
-      return () => clearInterval(countdown);
+    if (isKYCLoading) {
+      return;
     }
-  }, [timer]);
-
-  // useEffect to detect changes in isEmailVerified
-  useEffect(() => {
-    if (isEmailVerified) {
-      setActiveStep(1); // Move to the next step automatically when email is verified
+    
+    if (kycStatus && ['pending', 'approved', 'rejected'].includes(kycStatus)) {
+      return;
     }
-  }, [isEmailVerified]);
+  }, [kycStatus, isKYCLoading]);
 
-  const handleNextStep = () => {
-    if (activeStep < steps.length - 1) {
-      setActiveStep(activeStep + 1);
-    }
-  };
-
-  const handleSendVerification = (email) => {
-    setIsVerifying(true);
-    if (email) {
-      sendVerificationCodeMutation(email, {
+  const handleSendVerification = () => {
+    if (user?.email) {
+      sendVerificationCodeMutation(user.email, {
         onSuccess: () => {
           setTimer(60);
+          toast({
+            title: "Verification Code Sent",
+            status: "info",
+            duration: 3000,
+            position: "top"
+          });
         }
       });
     }
@@ -98,225 +130,181 @@ export default function Become() {
   };
 
   const handleKycSubmit = async () => {
-    if (kycFront && kycBack) {
-      setIsLoadings(true);
-      try {
-        const frontUploadRes = await edgestore.publicFiles.upload({
-          file: kycFront,
-        });
-
-        const backUploadRes = await edgestore.publicFiles.upload({
-          file: kycBack,
-        });
-
-        if (!frontUploadRes.url || !backUploadRes.url) {
-          throw new Error("Failed to upload one or both KYC documents");
-        }
-
-        const response = await fetch("/api/kyc", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: user?.id,
-            idFrontUrl: frontUploadRes.url,
-            idBackUrl: backUploadRes.url,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to submit KYC documents");
-        }
-router.push('/')
-        toast({
-          title: "KYC Submitted",
-          description: "Your KYC documents have been submitted.",
-          status: "success",
-          duration: 5000,
-          position: "top-right",
-          isClosable: true,
-        });
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          status: "error",
-          duration: 5000,
-          position: "top-right",
-          isClosable: true,
-        });
-      } finally {
-        setIsLoadings(false);
-      }
-    } else {
+    if (!kycFront || !kycBack) {
       toast({
-        title: "Error",
-        description: "Both KYC documents are required.",
+        title: "Missing Documents",
+        description: "Please upload both front and back of your ID",
         status: "warning",
-        duration: 5000,
-        isClosable: true,
+        duration: 3000,
+        position: "top"
       });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const [frontUploadRes, backUploadRes] = await Promise.all([
+        edgestore.publicFiles.upload({ file: kycFront }),
+        edgestore.publicFiles.upload({ file: kycBack })
+      ]);
+
+      const response = await fetch("/api/kyc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user?.id,
+          idFrontUrl: frontUploadRes.url,
+          idBackUrl: backUploadRes.url,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to submit KYC documents");
+
+      toast({
+        title: "KYC Submitted",
+        description: "Your documents are being reviewed",
+        status: "success",
+        duration: 5000,
+        position: "top"
+      });
+
+      router.push('/');
+    } catch (error) {
+      toast({
+        title: "Submission Error",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        position: "top"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  // Loading state
+  if (isKYCLoading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Spinner size="xl" />
+      </Box>
+    );
+  }
+
+  // Render KYC status if exists
+  if (kycStatus) {
+    return (
+      <Box>
+        <Header />
+        <Box px={6} py={4}>
+          <KYCStatusBanner status={kycStatus} />
+          <Button 
+            w="full" 
+            colorScheme="purple" 
+            onClick={() => router.push('/')}
+          >
+            Return to Home
+          </Button>
+        </Box>
+        <Bottom />
+      </Box>
+    );
+  }
 
   return (
     <Box>
       <Header />
-      <Box px={"20px"}>
-        <Box
-          h={"40px"}
-          display={"flex"}
-          gap={"10px"}
-          fontSize={"20px"}
-          justifyContent={"center"}
-          w={"full"}
-          alignItems={"center"}
-        >
-          <Heading textAlign={"center"} color={"teal"}>
-            Become a Vendor
-          </Heading>
+      <VStack px={6} spacing={6}>
+        <HStack justifyContent="center" alignItems="center" spacing={3}>
+          <Heading color="teal.500">Become a Vendor</Heading>
           <BsCashCoin />
-        </Box>
+        </HStack>
 
-        <Stepper colorScheme={"purple"} pt={"20px"} index={activeStep}>
-          {steps.map((step, index) => (
-            <Step key={index}>
-              <StepIndicator>
-                <StepStatus
-                  complete={<StepIcon />}
-                  incomplete={<StepNumber />}
-                  active={<StepNumber />}
-                />
-              </StepIndicator>
-
-              <Box flexShrink="0">
-                <StepTitle>{step.title}</StepTitle>
-              </Box>
-
-              <StepSeparator />
-            </Step>
-          ))}
-        </Stepper>
-
-        <Box h={"auto"} pt={6}>
-          {activeStep === 0 && (
-            <Box>
-              {isLoading ? (
-                <Skeleton borderRadius={"15px"} w="full" height="250px" />
-              ) : !isEmailVerified ? (
-                <>
-                  <FormControl>
-                    <FormLabel>Email Verification</FormLabel>
-                    <Box pb="10px" w="full" textAlign="center">
-                      <Text fontSize="sm" color="gray.500">
-                        Verification has been sent to your registered email: {user?.email}.
-                      </Text>
-                    </Box>
-                    <HStack display="flex" justifyContent="center" w="full" pb="10px">
-                      <PinInput
-                        type="text"
-                        value={verificationCode}
-                        onChange={(e) => setVerificationCode(e)}
-                        otp
-                      >
-                        <PinInputField />
-                        <PinInputField />
-                        <PinInputField />
-                        <PinInputField />
-                        <PinInputField />
-                        <PinInputField />
-                      </PinInput>
-                    </HStack>
-                  </FormControl>
-                  <Box pt="10px" w="full" display="flex" flexDirection="column" gap="10px">
-                    <Button
-                      isLoading={isVerifying}
-                      w="full"
-                      colorScheme="orange"
-                      variant={"outline"}
-                      onClick={() => handleSendVerification(user?.email)}
-                      isDisabled={timer > 0}
-                    >
-                      {timer > 0 ? `Resend in ${timer}s` : "Send Verification Code"}
-                    </Button>
-                    <Button
-                      isLoading={isConfirming}
-                      w="full"
-                      colorScheme="orange"
-                      onClick={handleVerifyCode}
-                    >
-                      Verify Code
-                    </Button>
-                  </Box>
-                </>
-              ) : (
-                <Text textAlign={"center"}>Email is verified. You may proceed to the next step.</Text>
-              )}
-              <Box display={"flex"} w={"full"} justifyContent={"flex-end"}>
-                <Button
-                  size={"sm"}
-                  mt={6}
-                  colorScheme="purple"
-                  onClick={handleNextStep}
-                  isDisabled={!isEmailVerified}
-                >
-                  Next
-                </Button>
-              </Box>
-            </Box>
-          )}
-
-          {activeStep === 1 && (
-            <Box h={"auto"} pb={"100px"}>
-              <Heading fontSize="xl" mb={4} textAlign={"center"}>
-                Submit your KYC Documents
-              </Heading>
-              <FormControl
-                mb={4}
-                display={"flex"}
-                flexDirection={"row"}
-                alignItems={"center"}
-                justifyContent={"space-between"}
+        {/* Email Verification Section */}
+        <VStack w="full" spacing={4}>
+          <FormControl>
+            <FormLabel>Email Verification</FormLabel>
+            <Text fontSize="sm" color="gray.500" textAlign="center" mb={4}>
+              Verification code sent to: {user?.email}
+            </Text>
+            
+            <HStack justifyContent="center" mb={4}>
+              <PinInput
+                type="text"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e)}
+                otp
               >
-                <FormLabel>ID Front</FormLabel>
-                <SingleImageDropzone
-                  width={"60vw"}
-                  height={200}
-                  value={kycFront}
-                  onChange={(file) => setKycFront(file)}
-                />
-              </FormControl>
+                {[...Array(6)].map((_, i) => (
+                  <PinInputField key={i} />
+                ))}
+              </PinInput>
+            </HStack>
 
-              <FormControl
-                mb={4}
-                display={"flex"}
-                flexDirection={"row"}
-                alignItems={"center"}
-                justifyContent={"space-between"}
-              >
-                <FormLabel>ID Back</FormLabel>
-                <SingleImageDropzone
-                  width={"60vw"}
-                  height={200}
-                  value={kycBack}
-                  onChange={(file) => setKycBack(file)}
-                />
-              </FormControl>
-
+            <VStack spacing={3}>
               <Button
-                w={"full"}
-                isLoading={isLoadings}
-                onClick={handleKycSubmit}
-                colorScheme={"orange"}
-                mt={6}
+                w="full"
+                colorScheme="orange"
+                variant="outline"
+                onClick={handleSendVerification}
+                isDisabled={timer > 0}
               >
-                Submit KYC
+                {timer > 0 ? `Resend in ${timer}s` : "Resend Verification Code"}
               </Button>
-            </Box>
+              
+              <Button
+                w="full"
+                colorScheme="purple"
+                onClick={handleVerifyCode}
+                isLoading={isConfirming}
+                isDisabled={verificationCode.length < 6}
+              >
+                Verify Code
+              </Button>
+            </VStack>
+          </FormControl>
+
+          {isEmailVerified && (
+            <VStack w="full" spacing={4}>
+              <Heading fontSize="xl" textAlign="center">
+                Submit KYC Documents
+              </Heading>
+              
+              <VStack w="full" spacing={4}>
+                <FormControl>
+                  <FormLabel>ID Front</FormLabel>
+                  <SingleImageDropzone
+                    width="100%"
+                    height={200}
+                    value={kycFront}
+                    onChange={(file) => setKycFront(file)}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>ID Back</FormLabel>
+                  <SingleImageDropzone
+                    width="100%"
+                    height={200}
+                    value={kycBack}
+                    onChange={(file) => setKycBack(file)}
+                  />
+                </FormControl>
+
+                <Button
+                  w="full"
+                  colorScheme="orange"
+                  onClick={handleKycSubmit}
+                  isLoading={isSubmitting}
+                  isDisabled={!kycFront || !kycBack}
+                >
+                  Submit KYC Documents
+                </Button>
+              </VStack>
+            </VStack>
           )}
-        </Box>
-      </Box>
+        </VStack>
+      </VStack>
       <Bottom />
     </Box>
   );

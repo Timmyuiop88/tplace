@@ -33,6 +33,15 @@ import { useProductsID } from "@/app/hooks/useProducts";
 import Loading from "@/components/loading";
 import { useSession } from 'next-auth/react';
 
+const MapContainer = ({ placeId }) => {
+ 
+  return (
+    <Box w={'full'} h={'200px'} borderRadius={'12px'}>
+  
+    </Box>
+  );
+};
+
 const ProductList = ({ params }) => {
   const { data: session, status } = useSession();
   const { products, isFetching, error: errors } = useProductsID(parseInt(params.id));
@@ -45,14 +54,14 @@ const ProductList = ({ params }) => {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [message, setMessage] = useState('');
-
+  console.log(products?.Latitude)
   const handleBackClick = () => {
     router.back();
   };
   const productId = params?.slug; // Handle potential undefined params
   const { user, loading, error } = useUser();
 
-  console.log(params.id);
+
 
   if (status === 'unauthenticated') {
     router.push('/login');
@@ -191,8 +200,7 @@ const ProductList = ({ params }) => {
                <Text ml={'5px'} fontWeight={700} fontSize={'15px'}>
                  {products.user.firstName}
                </Text>
-               <Text  ml={'5px'} fontSize={'12px'}>{products.createdAt}</Text>
-             </Box>
+               </Box>
            </Box>
 
            <Box
@@ -217,18 +225,7 @@ const ProductList = ({ params }) => {
            gap={'12px'}
 
          >
-           <Box
-        
-             display={'flex'}
-             alignItems={'center'}
-             gap={'4px'}
-             w={'auto'}
-
-           >
-             <IoLocation fill="orange" />
-             <Text fontWeight={700} fontSize={'12px'}>{products.state}</Text>
-           </Box>
-
+          
            <Box
              w={'auto'}
              display={'flex'}
@@ -237,7 +234,7 @@ const ProductList = ({ params }) => {
              justifyContent={'flex-end'}
            >
              <FaClock fill="orange" />
-             <Text fontSize={'12px'}>{products.createdAt}</Text>
+             <Text fontSize={'12px'}>{new Date(products.createdAt).toDateString()}</Text>
            </Box>
 
            <Box
@@ -344,12 +341,8 @@ const ProductList = ({ params }) => {
          >
            <IoLocation fill="orange" /><Text fontWeight={700} fontSize={'12px'}>Main Location</Text>
          </Box>
-         <Box
-           w={'full'}
-           h={'200px'}
-           bg={'grey'}
-           borderRadius={'12px'}
-         ></Box>
+    
+       
        </Box>
 
      </Box>

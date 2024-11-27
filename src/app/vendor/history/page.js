@@ -60,7 +60,7 @@ export default function TransactionHistory() {
   }
 
   return (
-    <Box h={'100vh'} w={'100%'} maxW={'7xl'} m={'auto'} bg={'white'} p={4}>
+    <Box h={'100vh'} w={'100%'}  m={'auto'} bg={'white'}>
       <Box
         mb={4}
         px={'10px'}
@@ -80,7 +80,7 @@ export default function TransactionHistory() {
         </Text>
       </Box>
 
-      <Stack spacing={4}>
+      <Stack spacing={4} p={4}>
         {transactions && transactions.map((transaction) => (
           <Box
             key={transaction.id}

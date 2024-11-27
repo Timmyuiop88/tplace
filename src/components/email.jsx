@@ -31,12 +31,12 @@ export const EmailTemplate = ({ firstName }) => (
                 <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:27px auto;width:auto">
                   <tbody>
                     <tr>
-                      <td><a href="https://www.jobaccepted.com/" style="line-height:100%;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;background-color:#5e6ad2;border-radius:3px;font-weight:600;color:#fff;text-align:center;padding:12px 24px 12px 24px;margin:0 auto" target="_blank"><span><i style="mso-font-width:400%;mso-text-raise:18" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:9px">Sign in</span><span><!--[if mso]><i style="mso-font-width:400%" hidden>&#8202;&#8202;&#8202;&#8203;</i></span></a></td>
+                      <td><a href="https://www.jobaccepted.com/" style="line-height:100%;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;background-color:#5e6ad2;border-radius:3px;font-weight:600;color:#fff;text-align:center;padding:12px 24px 12px 24px;margin:0 auto" target="_blank"><span><i style="mso-font-width:400%;mso-text-raise:18" hidden>&#8202;&#8202;&#8202;</i></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:9px">Sign in</span><span><i style="mso-font-width:400%" hidden>&#8202;&#8202;&#8202;&#8203;</i></span></a></td>
                     </tr>
                   </tbody>
                 </table>
                 <p style="font-size:14px;line-height:24px;margin:0;color:#444;letter-spacing:0;padding:0 40px;text-align:center">Not expecting this email?</p>
-                <p style="font-size:14px;line-height:24px;margin:0;color:#444;letter-spacing:0;padding:0 40px;text-align:center">Contact<!-- --> <a href="mailto:support@jobaccepted.com" style="color:#444;text-decoration:underline" target="_blank">support@jobaccepted.com</a> <!-- -->if you did not request this code.</p>
+                <p style="font-size:14px;line-height:24px;margin:0;color:#444;letter-spacing:0;padding:0 40px;text-align:center">Contact<a href="mailto:support@jobaccepted.com" style="color:#444;text-decoration:underline" target="_blank">support@jobaccepted.com</a> if you did not request this code.</p>
               </td>
             </tr>
           </tbody>

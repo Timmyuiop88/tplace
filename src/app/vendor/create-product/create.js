@@ -21,6 +21,7 @@ import { useEdgeStore } from '@/app/edgeProvider';
 import { SingleImageDropzone } from '@/components/singleImage';
 import { MultiImageDropzone } from '@/components/multiImage';
 import Bottom from '@/components/BottomNav';
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
 // Define initial form data
 const initialFormData = {
@@ -29,6 +30,7 @@ const initialFormData = {
   price: '',
   mainPhoto: '',
   category: '',
+  Latitude:'',
   photos: [],
 };
 
@@ -45,7 +47,9 @@ const popularCategories = [
   { id: 9, name: 'Music' },
   { id: 10, name: 'Mobile & Gadgets' },
 ];
-const Form1 = ({ formData, handleChange }) => {
+const Form1 = ({ formData, handleChange, setLocationValue, Locationvalue }) => {
+  
+
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
@@ -62,7 +66,9 @@ const Form1 = ({ formData, handleChange }) => {
           onChange={handleChange}
         />
       </FormControl>
+      
       <FormControl mb="2%">
+      
         <FormLabel htmlFor="description" fontWeight={'normal'}>
           Description
         </FormLabel>
@@ -85,6 +91,18 @@ const Form1 = ({ formData, handleChange }) => {
           onChange={handleChange}
         />
       </FormControl>
+      <FormControl mb="2%">
+        <FormLabel htmlFor="title" fontWeight={'normal'}>
+          Location
+        </FormLabel>
+        <GooglePlacesAutocomplete
+       selectProps={{
+        Locationvalue,
+        onChange: setLocationValue,
+      }}
+      apiKey="AIzaSyAsYCHt_Zqk2DEQK_nqctzfgzK9EDhFUTw"
+    />
+      </FormControl>
     </>
   );
 };
@@ -103,6 +121,7 @@ export default function Create() {
   const [progress, setProgress] = useState(33.33);
   const [formData, setFormData] = useState(initialFormData);
   const [file, setFile] = useState();
+  const [Locationvalue, setLocationValue] = useState(null);
   const [fileStates, setFileStates] = useState([]);
   const { edgestore } = useEdgeStore();
 const [loading, isLoading] = useState(false) 
@@ -111,10 +130,11 @@ const [loading, isLoading] = useState(false)
     setFormData((prevState) => ({
       ...prevState,
       [id]: value,
+      Latitude : Locationvalue?.value?.place_id
     }));
   };
 
-
+console.log({Locationvalue})
   function updateFileProgress(key, progress) {
     setFileStates((fileStates) => {
       const newFileStates = structuredClone(fileStates);
@@ -228,7 +248,7 @@ mt={'300px'}
           isAnimated
         ></Progress>
         {step === 1 ? (
-          <Form1 formData={formData} handleChange={handleChange} />
+          <Form1 setLocationValue={setLocationValue} Locationvalue={Locationvalue} formData={formData} handleChange={handleChange} />
         ) : step === 2 ? (
           <>
             <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
