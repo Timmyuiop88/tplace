@@ -7,7 +7,7 @@ export default function FWBTN(props) {
     const toast = useToast();
     const router = useRouter();
   const config = {
-    public_key: process.env.FWKEY,
+    public_key: process.env.NEXT_PUBLIC_FWKEY,
     tx_ref: Date.now(),
     amount: props.amount,
     currency: 'NGN',
