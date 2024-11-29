@@ -1,6 +1,6 @@
 'use client';
 import Bottom from "@/components/BottomNav";
-import { Box, Button, Text, Accordion, Spinner, AccordionItem, AccordionButton, Drawer,
+import { Box,VStack, Button, Text, Accordion, Spinner, AccordionItem, AccordionButton, Drawer,
   DrawerBody,
   Input,
   DrawerFooter,
@@ -267,50 +267,54 @@ export default function Offers() {
     <DrawerHeader>Product Owner Details</DrawerHeader>
 
     <DrawerBody>
-      {/* Product Owner Details */}
       <Box display="flex" flexDirection="column" alignItems="flex-start" py={4}>
-        {/* Owner's Name */}
-        {isFetching ? <SkeletonText/> :  <Text fontSize="16px" fontWeight="600">
-    
-    {products?.user.firstName} {products?.user.lastName}
-  </Text> }
-       
-
-        {/* Owner's Email */}
-        <Box display="flex" alignItems="center" mt={2}>
-          <Text fontSize="14px" fontWeight="500" mr={2}>
-            Email:
-          </Text>
-          <Text fontSize="14px" color="blue.500" isTruncated>
-            {products?.user.email}
-          </Text>
-        </Box>
-
-        {/* Owner's Phone Number */}
-       
-          <Box display="flex" alignItems="center" mt={2}>
-            <Text fontSize="14px" fontWeight="500" mr={2}>
-              Phone:
+        {isFetching ? (
+          <VStack width="full" spacing={3}>
+            <Skeleton height='20px' width="full" />
+            <Skeleton height='20px' width="full" />
+            <Skeleton height='20px' width="full" />
+            <Skeleton height='40px' width="full" />
+          </VStack>
+        ) : (
+          <>
+            {/* Owner's Name */}
+            <Text fontSize="16px" fontWeight="600">
+              {products?.user.firstName} {products?.user.lastName}
             </Text>
-            <Text fontSize="14px" isTruncated>
-              {products?.user.phoneNumber || 'Not Available'}
-            </Text>
-          </Box>
-    
 
-        {/* WhatsApp Icon to Open Chat */}
-        
-          <Box display="flex" alignItems="center" mt={4}>
-            <Button
-              colorScheme="whatsapp"
-              leftIcon={<MdCall />}
-              onClick={() => window.open(`https://wa.me/${products.user.phoneNumber || null}`)}
-              size="sm"
-            >
-              Contact via WhatsApp
-            </Button>
-          </Box>
-     
+            {/* Owner's Email */}
+            <Box display="flex" alignItems="center" mt={2}>
+              <Text fontSize="14px" fontWeight="500" mr={2}>
+                Email:
+              </Text>
+              <Text fontSize="14px" color="blue.500" isTruncated>
+                {products?.user.email}
+              </Text>
+            </Box>
+
+            {/* Owner's Phone Number */}
+            <Box display="flex" alignItems="center" mt={2}>
+              <Text fontSize="14px" fontWeight="500" mr={2}>
+                Phone:
+              </Text>
+              <Text fontSize="14px" isTruncated>
+                {products?.user.phoneNumber || 'Not Available'}
+              </Text>
+            </Box>
+
+            {/* WhatsApp Icon to Open Chat */}
+            <Box display="flex" alignItems="center" mt={4}>
+              <Button
+                colorScheme="whatsapp"
+                leftIcon={<MdCall />}
+                onClick={() => window.open(`https://wa.me/${products.user.phoneNumber || null}`)}
+                size="sm"
+              >
+                Contact via WhatsApp
+              </Button>
+            </Box>
+          </>
+        )}
       </Box>
     </DrawerBody>
 

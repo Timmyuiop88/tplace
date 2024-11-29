@@ -12,11 +12,13 @@ import {
   FormLabel, 
   Input, 
   Grid, 
+  Flex,
   Divider,
   useToast,
   Switch,
   Icon,
-  Container
+  Container,
+  useBreakpointValue
 } from "@chakra-ui/react";
 import { 
   User, 
@@ -43,8 +45,12 @@ const AccountProfile = () => {
     lastName: '',
     email: '',
     phoneNumber: '',
-  
   });
+
+  // Responsive values
+  const avatarSize = useBreakpointValue({ base: "xl", md: "2xl" });
+  const gridColumns = useBreakpointValue({ base: "1fr", md: "repeat(2, 1fr)" });
+  const spacing = useBreakpointValue({ base: 4, md: 6 });
 
   // Sync form data with user data
   useEffect(() => {
@@ -94,27 +100,43 @@ const AccountProfile = () => {
       case 'profile':
         return (
           <Box as="form" onSubmit={handleProfileUpdate} w="full">
-            <VStack spacing={6} align="stretch">
-              <HStack spacing={6} align="center">
+            <VStack spacing={spacing} align="stretch">
+              <Flex 
+                direction={{ base: "column", md: "row" }}
+                align="center" 
+                gap={spacing}
+              >
                 <Avatar 
-                  size="2xl" 
+                  size={avatarSize} 
                   src={formData.profileImage || '/default-avatar.png'}
                 />
-                <VStack align="start" spacing={2}>
+                <VStack 
+                  align={{ base: "center", md: "start" }} 
+                  spacing={2} 
+                  w="full"
+                >
                   <Button 
                     leftIcon={<Upload />} 
                     variant="outline" 
                     colorScheme="orange"
+                    w={{ base: "full", md: "auto" }}
                   >
                     Upload Photo
                   </Button>
-                  <Text fontSize="sm" color="gray.500">
+                  <Text 
+                    fontSize="sm" 
+                    color="gray.500" 
+                    textAlign={{ base: "center", md: "left" }}
+                  >
                     Recommended: Square photo, max 5MB
                   </Text>
                 </VStack>
-              </HStack>
+              </Flex>
 
-              <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+              <Grid 
+                templateColumns={gridColumns} 
+                gap={spacing}
+              >
                 <FormControl>
                   <FormLabel>First Name</FormLabel>
                   <Input 
@@ -122,7 +144,7 @@ const AccountProfile = () => {
                     value={formData.firstName}
                     onChange={handleInputChange}
                     variant="filled"
-                    focusBorderColor="orange.500"
+                    focusBorderColor="#ffa41d"
                   />
                 </FormControl>
                 <FormControl>
@@ -132,7 +154,7 @@ const AccountProfile = () => {
                     value={formData.lastName}
                     onChange={handleInputChange}
                     variant="filled"
-                    focusBorderColor="orange.500"
+                    focusBorderColor="#ffa41d"
                   />
                 </FormControl>
                 <FormControl>
@@ -143,7 +165,7 @@ const AccountProfile = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     variant="filled"
-                    focusBorderColor="orange.500"
+                    focusBorderColor="#ffa41d"
                   />
                 </FormControl>
                 <FormControl>
@@ -154,7 +176,7 @@ const AccountProfile = () => {
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
                     variant="filled"
-                    focusBorderColor="orange.500"
+                    focusBorderColor="#ffa41d"
                   />
                 </FormControl>
               </Grid>
@@ -164,6 +186,8 @@ const AccountProfile = () => {
                 colorScheme="orange" 
                 isLoading={isUpdating}
                 w="full"
+                bg="#ffa41d"
+                _hover={{ bg: "#ff9300" }}
               >
                 Update Profile
               </Button>
@@ -173,22 +197,48 @@ const AccountProfile = () => {
 
       case 'security':
         return (
-          <VStack spacing={6} align="stretch">
-            <HStack bg="orange.50" p={4} borderRadius="md">
-              <Icon as={ShieldCheck} color="orange.500" boxSize={8} />
-              <VStack align="start" spacing={1}>
+          <VStack spacing={spacing} align="stretch">
+            <Flex 
+              bg="orange.50" 
+              p={4} 
+              borderRadius="md"
+              direction={{ base: "column", md: "row" }}
+              align="center"
+              gap={3}
+            >
+              <Icon as={ShieldCheck} color="#ffa41d" boxSize={8} />
+              <VStack 
+                align={{ base: "center", md: "start" }} 
+                spacing={1} 
+                flex={1}
+              >
                 <Text fontWeight="bold">Two-Factor Authentication</Text>
-                <Text fontSize="sm" color="gray.600">
+                <Text 
+                  fontSize="sm" 
+                  color="gray.600" 
+                  textAlign={{ base: "center", md: "left" }}
+                >
                   Add an extra layer of security to your account
                 </Text>
               </VStack>
-              <Button ml="auto" colorScheme="orange" variant="outline">
+              <Button 
+                mt={{ base: 3, md: 0 }} 
+                colorScheme="orange" 
+                variant="outline"
+                w={{ base: "full", md: "auto" }}
+              >
                 Enable 2FA
               </Button>
-            </HStack>
+            </Flex>
 
-            <FormControl display="flex" alignItems="center" justifyContent="space-between">
-              <FormLabel>Login Notifications</FormLabel>
+            <FormControl 
+              display="flex" 
+              flexDirection={{ base: "column", md: "row" }}
+              alignItems="center" 
+              justifyContent="space-between"
+              gap={3}
+            >
+              <FormLabel m={0}>Login Notifications</FormLabel>
               <Switch colorScheme="orange" />
             </FormControl>
           </VStack>
@@ -196,18 +246,30 @@ const AccountProfile = () => {
 
       case 'notifications':
         return (
-          <VStack spacing={6} align="stretch">
-            <FormControl display="flex" alignItems="center" justifyContent="space-between">
+          <VStack spacing={spacing} align="stretch">
+            <FormControl 
+              display="flex" 
+              flexDirection={{ base: "column", md: "row" }}
+              alignItems="center" 
+              justifyContent="space-between"
+              gap={3}
+            >
               <HStack>
-                <Icon as={Bell} color="orange.500" />
-                <FormLabel ml={2}>Email Notifications</FormLabel>
+                <Icon as={Bell} color="#ffa41d" />
+                <FormLabel m={0}>Email Notifications</FormLabel>
               </HStack>
               <Switch colorScheme="orange" />
             </FormControl>
-            <FormControl display="flex" alignItems="center" justifyContent="space-between">
+            <FormControl 
+              display="flex" 
+              flexDirection={{ base: "column", md: "row" }}
+              alignItems="center" 
+              justifyContent="space-between"
+              gap={3}
+            >
               <HStack>
-                <Icon as={Bell} color="orange.500" />
-                <FormLabel ml={2}>Push Notifications</FormLabel>
+                <Icon as={Bell} color="#ffa41d" />
+                <FormLabel m={0}>Push Notifications</FormLabel>
               </HStack>
               <Switch colorScheme="orange" />
             </FormControl>
@@ -232,42 +294,63 @@ const AccountProfile = () => {
       <Header />
       <Container maxW="container.xl" py={8}>
         <VStack spacing={8} align="stretch">
-          <HStack 
-            bg="orange.500" 
+          <Flex 
+            bg="#ffa41d" 
             color="white" 
             p={6} 
             borderRadius="xl" 
-            spacing={6}
+            direction={{ base: "column", md: "row" }}
+            align="center"
+            gap={4}
           >
             <Avatar 
-              size="xl" 
+              size={avatarSize} 
               src={user?.profileImage || '/default-avatar.png'}
             />
-            <VStack align="start" spacing={1}>
-              <Text fontSize="2xl" fontWeight="bold">
+            <VStack 
+              align={{ base: "center", md: "start" }} 
+              spacing={1}
+            >
+              <Text 
+                fontSize={{ base: "xl", md: "2xl" }} 
+                fontWeight="bold"
+                textAlign={{ base: "center", md: "left" }}
+              >
                 {user?.firstName} {user?.lastName}
               </Text>
-              <Text>{user?.email}</Text>
+              <Text textAlign={{ base: "center", md: "left" }}>
+                {user?.email}
+              </Text>
             </VStack>
-          </HStack>
+          </Flex>
 
-          <HStack spacing={4} overflowX="auto" pb={2}>
+          <Flex 
+            overflowX="auto" 
+            pb={2} 
+            gap={2}
+            justifyContent={{ base: "center", md: "start" }}
+          >
             {[
               { icon: User, label: 'Profile', key: 'profile' },
               { icon: ShieldCheck, label: 'Security', key: 'security' },
               { icon: Bell, label: 'Notifications', key: 'notifications' }
             ].map((item) => (
               <Button
+              size={'sm'}
                 key={item.key}
                 leftIcon={<Icon as={item.icon} />}
                 variant={activeSection === item.key ? 'solid' : 'outline'}
                 colorScheme="orange"
                 onClick={() => setActiveSection(item.key)}
+                bg={activeSection === item.key ? "#ffa41d" : undefined}
+                _hover={{ 
+                  bg: activeSection === item.key ? "#ff9300" : undefined 
+                }}
               >
-                {item.label}
+                {activeSection === item.key? item.label : ""}
               </Button>
             ))}
-          </HStack>
+          </Flex>
 
           <Box 
             bg="white" 
