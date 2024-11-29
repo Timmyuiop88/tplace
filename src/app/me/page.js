@@ -7,14 +7,12 @@ import Bottom from "@/components/BottomNav";
 
 
 export default function App() {
-    const { user, loading, error } = useUser();
-    if (loading) {
-        return <Loading/>
-      }
+    
+
   return (
     <>
     
-      <Cover />
+  
       <Main />
       <Bottom/>
     </>

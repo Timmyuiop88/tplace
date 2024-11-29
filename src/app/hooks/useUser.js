@@ -106,7 +106,7 @@ const useUser = (setIsVerifying) => {
 
   return {
     user,
-    loading: isUserLoading || isKYCLoading,
+    loading: isUserLoading ,
     error: error || kycError,
     isEmailVerified,
     sendVerificationCodeMutation,

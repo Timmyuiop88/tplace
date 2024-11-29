@@ -7,7 +7,8 @@ import { Box, Button, Text, Accordion, Spinner, AccordionItem, AccordionButton, 
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton, AccordionPanel,useToast, AccordionIcon, useDisclosure, Tabs, TabList, TabPanels, Tab, TabPanel, Tag, Skeleton } from "@chakra-ui/react";
+  DrawerCloseButton, AccordionPanel,useToast, AccordionIcon, useDisclosure, Tabs, TabList, TabPanels, Tab, TabPanel, Tag, Skeleton, 
+  SkeletonText} from "@chakra-ui/react";
 import { IoChevronBackSharp } from "react-icons/io5";
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -269,9 +270,11 @@ export default function Offers() {
       {/* Product Owner Details */}
       <Box display="flex" flexDirection="column" alignItems="flex-start" py={4}>
         {/* Owner's Name */}
-        <Text fontSize="16px" fontWeight="600">
-          {products?.user.firstName} {products?.user.lastName}
-        </Text>
+        {isFetching ? <SkeletonText/> :  <Text fontSize="16px" fontWeight="600">
+    
+    {products?.user.firstName} {products?.user.lastName}
+  </Text> }
+       
 
         {/* Owner's Email */}
         <Box display="flex" alignItems="center" mt={2}>
