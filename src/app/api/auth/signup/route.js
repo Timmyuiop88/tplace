@@ -39,7 +39,7 @@ export async function POST(req) {
 
     // Send registration email
     await resend.emails.send({
-      from: 'TradePlace <onboarding@quantumassetvault.co>',
+      from: 'TradePlace <onboarding@tradeplace.ng>',
       to: [email],
       subject: 'Welcome to TradePlace!',
       react: TradePlaceWelcomeEmail(), // Pass user info to the email template

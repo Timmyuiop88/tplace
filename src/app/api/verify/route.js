@@ -56,7 +56,7 @@ export const POST = async (req) => {
 
     // Send verification email
     await resend.emails.send({
-      from: 'TradePlace <onboarding@quantumassetvault.co>',
+      from: 'TradePlace <onboarding@tradeplace.ng>',
       to: [email],  // 'to' must be an array
       subject: 'Verify Your Email Address',
       react: <TradePlaceVerificationEmail verificationCode={code} />,

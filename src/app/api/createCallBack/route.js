@@ -55,7 +55,7 @@ const userMessage = 'I am ready to Negotiate on this Product'
 
     // Send email notification to product owner
     await resend.emails.send({
-      from: 'TradePlace <onboarding@quantumassetvault.co>',
+      from: 'TradePlace <onboarding@tradeplace.ng>',
       to: [ownerEmail],  // 'to' must be an array
       subject: 'Someone is Interested in Your Product!',
       react: <CallbackRequestEmail message={userMessage} productName={product.name} />,
